@@ -1,8 +1,12 @@
 <template>
-  <div>
+  <div v-if="invoicesLoaded">
     <div v-if="!mobile" class="app flex flex-column">
       <Navigation />
       <div class="app-content flex flex-column">
+        <Modal v-if="modalActive" />
+        <transition name="invoice">
+          <InvoiceModal v-if="invoiceModal"/>
+        </transition>
         <router-view />
       </div>
     </div>
@@ -14,7 +18,10 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
 import Navigation from "./components/Navigation";
+import InvoiceModal from './components/InvoiceModal'
+import Modal from './components/Modal';
 export default {
   data() {
     return {
@@ -23,12 +30,16 @@ export default {
   },
   components: {
     Navigation,
+    InvoiceModal,
+    Modal
   },
   created() {
+    this.GET_INVOICES();
     this.checkScreen();
     window.addEventListener("resize", this.checkScreen);
   },
   methods: {
+    ...mapActions(['GET_INVOICES']),
     checkScreen() {
       const windowWidth = window.innerWidth;
       if (windowWidth <= 750) {
@@ -39,6 +50,9 @@ export default {
       }
     },
   },
+  computed: {
+    ...mapState(["invoiceModal", 'modalActive', 'invoicesLoaded']),
+  }
 };
 </script>
 
@@ -77,6 +91,17 @@ export default {
   p {
     margin-top: 16px;
   }
+}
+
+//animated invoice
+.invoice-enter-active,
+.invoice-leave-active {
+  transition: 0.8s ease all;
+}
+
+.invoice-enter-from,
+.invoice-leave-to {
+  transform: translateX(-700px);
 }
 
 button,
