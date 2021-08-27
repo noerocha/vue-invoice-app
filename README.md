@@ -1,4 +1,5 @@
 # invoice
+Following up John Komarnicki YT video
 
 ## Project setup
 ```
